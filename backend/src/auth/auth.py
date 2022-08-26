@@ -5,9 +5,9 @@ from jose import jwt
 from urllib.request import urlopen
 
 
-AUTH0_DOMAIN = 'udacity-fsnd.auth0.com'
+AUTH0_DOMAIN = 'dev-91bjsq76.us.auth0.com'
 ALGORITHMS = ['RS256']
-API_AUDIENCE = 'dev'
+API_AUDIENCE = 'coffee_shop'
 
 ## AuthError Exception
 '''
@@ -32,12 +32,13 @@ class AuthError(Exception):
 '''
 def get_token_auth_header():
     auth = request.headers.get('Authorization', None)
+
     if not auth:
         raise AuthError({
             'code': 'Authorization_header_missing',
             'description': 'Authorization header is expected.'
         }, 401)
-    parts = auth.split()
+    parts = auth.split(' ')    
 
     if parts[0].lower() != 'bearer':
         raise AuthError({
@@ -49,7 +50,7 @@ def get_token_auth_header():
             "code": "invalid_headerr",
             'description': "invalid token"
         }, 401)
-    elif len(parts) > 1:
+    elif len(parts) > 2:
         raise AuthError({
             "code": "invalid_headerr",
             'description': "only bearer and token are allowed in header"
@@ -101,7 +102,7 @@ def check_permissions(permission, payload):
 '''
 def verify_decode_jwt(token):
     jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
-    jwks = json.load(jsonurl.read())
+    jwks = json.loads(jsonurl.read())
     unverified_header = jwt.get_unverified_header(token)
 
     rsa_key = {}
