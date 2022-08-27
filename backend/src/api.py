@@ -22,7 +22,7 @@ def after_request(response):
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 !! Running this function will add one
 '''
-db_drop_and_create_all()
+# db_drop_and_create_all()
 
 # ROUTES
 '''
@@ -110,17 +110,17 @@ def post_a_drink(payload):
 def modify_drink(payload, id):
     
     drink = Drink.query.filter(Drink.id == id).one_or_none()
+    print(drink)
     if not drink:
         abort(404)
     body = request.get_json()
     title = body.get('title', None)
     recipe = body.get('recipe', None)
     try:
-        if not title:        
+        if title:        
             drink.title = title
-        if not recipe:        
+        if recipe:        
             drink.recipe = json.dumps(recipe)
-
         drink.update()
 
         return jsonify({
@@ -129,10 +129,6 @@ def modify_drink(payload, id):
         }, 200)
     except:
         abort(422)
-    r
-
-
-
 '''
 @TODO implement endpoint
     DELETE /drinks/<id>
@@ -143,7 +139,7 @@ def modify_drink(payload, id):
     returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
         or appropriate status code indicating reason for failure
 '''
-@app.route('/delete/<int:id>', methods=['DELETE'])
+@app.route('/drinks/<int:id>', methods=['DELETE'])
 @requires_auth('delete:drinks')
 def delete_drink(payload, id):
     drink = Drink.query.filter(Drink.id == id).one_or_none()
